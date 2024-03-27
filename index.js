@@ -37,6 +37,48 @@ const list = [
 },
 ];
 
+let append = function (name, age) {
+    let lastIndex = findEndOfList(linkedList.linkedList);
+    let newNode = {
+        value: {
+            name,
+            age,
+            index: lastIndex + 1
+        },
+        next: undefined,
+    }
+    linkedList.linkedList.push(newNode);
+    modPrevTail(linkedList, lastIndex);
+    renderNodeDom(linkedList);
+};
+
+let prepend = function (name, age) {
+
+    function updateIndex(linkedList) {
+        for( let i=1; i<linkedList.linkedList.length; i++) {
+            linkedList.linkedList[i].value.index = linkedList.linkedList[i].value.index + 1;
+        }
+        return linkedList;
+    }
+    let headNode = linkedList.linkedList[0];
+    let newNode = {
+        value: {
+            name,
+            age,
+            index: headNode.value.index
+        },
+        next: linkedList.linkedList[0].value
+    }
+    linkedList.linkedList.unshift(newNode);
+    return updateIndex(linkedList);
+}
+
+let size = function (count = 0) {
+    if (linkedList.linkedList[count].next == undefined) 
+        return console.log("Total Number of Nodes: " + (count + 1));
+    size(count + 1);
+}
+
 function findEndOfList(list) {
     let lastIndex = list.length - 1;
     return lastIndex;
@@ -44,8 +86,27 @@ function findEndOfList(list) {
 
 function modPrevTail(dataBase, lastIndex) {
     dataBase.linkedList[lastIndex].next = dataBase.linkedList[lastIndex + 1].value;
-    console.log(dataBase);
     return;
+}
+
+function renderNodeDom(data) {
+    console.log(data);
+    let container = document.getElementById('main');
+    container.innerHTML = "";
+    for(let i = 0; i<data.linkedList.length; i++) {
+        let node = document.createElement('div');
+        let name = document.createElement('p');
+        name.innerHTML = 'name: ' + data.linkedList[i].value.name;
+        node.appendChild(name);
+        let age = document.createElement('p');
+        age.innerHTML = 'age: ' + data.linkedList[i].value.age;
+        node.appendChild(age);
+        let index = document.createElement('p');
+        index.innerHTML = 'index: ' + data.linkedList[i].value.index;
+        node.setAttribute('class', 'node');
+        node.appendChild(index);
+        container.appendChild(node);
+    }
 }
 
 let LinkedList = function (list) {
@@ -59,19 +120,9 @@ let LinkedList = function (list) {
 
     let dataBase = {
         linkedList: listCopy,
-        append: function(name, age) {
-            let lastIndex = findEndOfList(linkedList.linkedList);
-            let newNode = {
-                value: {
-                    name,
-                    age,
-                    index: lastIndex + 1
-                },
-                next: undefined,
-            }
-            dataBase.linkedList.push(newNode);
-            modPrevTail(dataBase, lastIndex);
-        }
+        append: append,
+        prepend: prepend,
+        size: size
     }
     return dataBase;
 } 
@@ -87,28 +138,9 @@ function makeNodes(node) {
     }
 }
 
-function renderNodeDom(data) {
-    let container = document.getElementById('main');
-    container.innerHTML = "";
-    for(let i = 0; i<list.length; i++) {
-        let node = document.createElement('div');
-        let name = document.createElement('p');
-        name.innerHTML = data.linkedList[i].value.name;
-        node.appendChild(name);
-        let age = document.createElement('p');
-        age.innerHTML = data.linkedList[i].value.age;
-        node.appendChild(age);
-        let index = document.createElement('p');
-        index.innerHTML = data.linkedList[i].value.index;
-        node.setAttribute('class', 'node');
-        node.appendChild(index);
-        container.appendChild(node);
-    }
-}
-
 
 
 let linkedList = LinkedList(list);
 renderNodeDom(linkedList);
-console.log(linkedList);
+
 

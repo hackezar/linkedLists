@@ -37,6 +37,15 @@ const list = [
 },
 ];
 
+function updateIndex(linkedList) {
+    for( let i=1; i<linkedList.linkedList.length; i++) {
+        linkedList.linkedList[i].value.index = linkedList.linkedList[i].value.index + 1;
+        if (linkedList.linkedList.length == i + 1)
+            linkedList.linkedList[i].next = undefined;
+    }
+    return linkedList;
+}
+
 let append = function (name, age) {
     let lastIndex = findEndOfList(linkedList.linkedList);
     let newNode = {
@@ -53,13 +62,6 @@ let append = function (name, age) {
 };
 
 let prepend = function (name, age) {
-
-    function updateIndex(linkedList) {
-        for( let i=1; i<linkedList.linkedList.length; i++) {
-            linkedList.linkedList[i].value.index = linkedList.linkedList[i].value.index + 1;
-        }
-        return linkedList;
-    }
     let headNode = linkedList.linkedList[0];
     let newNode = {
         value: {
@@ -77,6 +79,95 @@ let size = function (count = 0) {
     if (linkedList.linkedList[count].next == undefined) 
         return console.log("Total Number of Nodes: " + (count + 1));
     size(count + 1);
+}
+
+let head = function () {
+    return linkedList.linkedList[0].value;
+}
+
+let findTail = function (count = 0) {
+    if (linkedList.linkedList[count].next == undefined)
+        return console.log(linkedList.linkedList[count].value);
+    findTail(count + 1);
+}
+
+let atIndex = function (index) {
+    return console.log(linkedList.linkedList[index].value)
+}
+
+let pop = function (count = 0) {
+    if (linkedList.linkedList[count].next == undefined) {
+        linkedList.linkedList.pop()
+        linkedList = updateIndex(linkedList);
+        renderNodeDom(linkedList);
+        console.log(linkedList);
+        return linkedList;
+    }
+    pop(count + 1);
+}
+
+let contains = function (value) {
+    for (let i = 0; i < linkedList.linkedList.length; i++) {
+        if (linkedList.linkedList[i].value.name == value || linkedList.linkedList[i].value.age == value) {
+            console.log('Found!')
+            console.log(linkedList.linkedList[i].value);
+            return true;
+        } else {
+            console.log('Not Found!');
+            return false;
+        }
+    }
+}
+
+let find = function(value, count = 0) {
+    if (linkedList.linkedList[count].value.age == value || linkedList.linkedList[count].value.name == value) {
+        console.log(count);
+        return count;
+    } else if (count + 1 == linkedList.linkedList.length) {
+        console.log('Not Found!');
+        return null;
+    }
+    count++;
+    find(value, count);
+}
+
+let toString = function(count=0, stringList="") {
+    if (linkedList.linkedList[count].next == undefined) {
+        stringList = stringList + 'null';
+        console.log(stringList);
+        return stringList;
+    }
+    stringList = stringList + '(Name: ' + linkedList.linkedList[count].value.name + ', Age: ' + linkedList.linkedList[count].value.age + ' ) -> ';
+    count++;
+    toString(count, stringList);
+}
+
+let insertAt = function(name, age, index) {
+    let newNode = {
+        value: {
+            name: name,
+            age: age,
+            index: index,
+        },
+        next: linkedList.linkedList[index].value
+    };
+    linkedList.linkedList.splice(index, 0, newNode);
+    linkedList.linkedList[index - 1].next = linkedList.linkedList[index].value;
+    for (let i = 0; i<linkedList.linkedList.length; i++) {
+        linkedList.linkedList[i].value.index = i;
+    }
+    renderNodeDom(linkedList);
+    return linkedList;
+}
+
+let removeAt = function(index) {
+    linkedList.linkedList.splice(index, 1);
+    for (let i = 0; i<linkedList.linkedList.length; i++) {
+        linkedList.linkedList[i].value.index = i;
+    }
+    linkedList.linkedList[index - 1].next = linkedList.linkedList[index].value;
+    renderNodeDom(linkedList);
+    return linkedList;
 }
 
 function findEndOfList(list) {
@@ -122,7 +213,16 @@ let LinkedList = function (list) {
         linkedList: listCopy,
         append: append,
         prepend: prepend,
-        size: size
+        size: size,
+        head: head,
+        tail: findTail,
+        at: atIndex,
+        pop: pop,
+        contains: contains,
+        find: find,
+        toString: toString,
+        insertAt: insertAt,
+        removeAt: removeAt
     }
     return dataBase;
 } 
